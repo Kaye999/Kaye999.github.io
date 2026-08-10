@@ -275,20 +275,22 @@ footer{
 
 /* ---- Selected-work marquee (the "train") -------------------------------- */
 .marquee{
-  position:relative; width:100vw; margin-left:calc(50% - 50vw); overflow:hidden;
+  position:relative; width:100vw; margin-left:calc(50% - 50vw);
+  overflow-x:auto; overflow-y:hidden; cursor:grab;
+  scrollbar-width:none; -ms-overflow-style:none; touch-action:pan-x; -webkit-overflow-scrolling:touch;
   -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
           mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
 }
-.marquee-track{ display:flex; gap:1rem; width:max-content; padding:.5rem .25rem; animation:marq 46s linear infinite; }
-.marquee:hover .marquee-track, .marquee:active .marquee-track{ animation-play-state:paused; }
-@keyframes marq{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+.marquee::-webkit-scrollbar{ display:none; }
+.marquee.dragging{ cursor:grabbing; }
+.marquee-track{ display:flex; gap:1rem; width:max-content; padding:.5rem .25rem; user-select:none; -webkit-user-select:none; }
 .work-card{
   flex:0 0 auto; width:clamp(258px, 74vw, 336px); border-radius:16px; overflow:hidden; position:relative;
   text-decoration:none; color:inherit; border:1px solid var(--line); background:var(--ink-2);
   transition:transform .4s var(--ease-out-expo), border-color .4s, box-shadow .4s;
 }
 .work-card:hover{ transform:translateY(-4px); border-color:var(--line-2); box-shadow:0 24px 54px -32px rgba(47,243,234,.65); }
-.work-card img{ display:block; width:100%; aspect-ratio:16/10; object-fit:cover; object-position:top center; background:var(--ink-3); }
+.work-card img{ display:block; width:100%; aspect-ratio:16/10; object-fit:cover; object-position:top center; background:var(--ink-3); -webkit-user-drag:none; user-select:none; pointer-events:none; }
 .work-cap{ display:flex; align-items:center; justify-content:space-between; gap:.6rem; padding:.75rem .9rem; }
 .work-name{ font-family:var(--font-display); font-weight:700; font-size:var(--text-base); color:var(--bone); }
 .work-tag{ font-family:var(--font-mono); font-size:var(--text-tiny); letter-spacing:.06em; text-transform:uppercase; color:var(--ash-dim); white-space:nowrap; }
@@ -744,8 +746,65 @@ footer{
     requestAnimationFrame(loop);
   })();
 
-  /* Duplicate the work-marquee track so the scroll loops seamlessly */
-  (function () { var tr = document.querySelector('.marquee-track'); if (tr) tr.innerHTML += tr.innerHTML; })();
+  /* Work marquee — auto-scroll + drag / swipe (manual). Triplicated track loops
+     seamlessly; auto pauses while the visitor hovers, drags, swipes or wheels. */
+  (function () {
+    var el = document.querySelector('.marquee');
+    var track = el && el.querySelector('.marquee-track');
+    if (!el || !track) return;
+    var base = track.innerHTML;
+    track.innerHTML = base + base + base;               // 3 copies → seamless in both directions
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var SPEED = 0.5;                                     // px/frame auto-scroll
+    var interacting = false, resumeT = 0;
+    function pause() { interacting = true; clearTimeout(resumeT); }
+    function resumeSoon() { clearTimeout(resumeT); resumeT = setTimeout(function () { interacting = false; }, 1400); }
+
+    el.addEventListener('mouseenter', pause);
+    el.addEventListener('mouseleave', resumeSoon);
+    el.addEventListener('wheel', function () { pause(); resumeSoon(); }, { passive: true });
+    el.addEventListener('touchstart', pause, { passive: true });
+    el.addEventListener('touchend', resumeSoon, { passive: true });
+
+    function unit() { return track.scrollWidth / 3; }
+    function wrap() {
+      var u = unit();
+      if (u > 0) {
+        if (el.scrollLeft >= u) el.scrollLeft -= u;
+        else if (el.scrollLeft <= 0) el.scrollLeft += u;
+      }
+    }
+    requestAnimationFrame(function () { el.scrollLeft = 1; });   // off the 0 edge so left-drag can wrap
+
+    // Mouse / trackpad drag (touch uses native momentum scrolling)
+    var down = false, startX = 0, startScroll = 0, moved = 0;
+    el.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch') return;
+      down = true; moved = 0; pause();
+      startX = e.clientX; startScroll = el.scrollLeft;
+      el.classList.add('dragging');
+      try { el.setPointerCapture(e.pointerId); } catch (x) {}
+    });
+    el.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dx = e.clientX - startX; moved = Math.max(moved, Math.abs(dx));
+      el.scrollLeft = startScroll - dx;
+      var u = unit();
+      if (el.scrollLeft <= 0) { el.scrollLeft += u; startScroll += u; }
+      else if (el.scrollLeft >= u) { el.scrollLeft -= u; startScroll -= u; }
+    });
+    function endDrag() { if (!down) return; down = false; el.classList.remove('dragging'); resumeSoon(); }
+    el.addEventListener('pointerup', endDrag);
+    el.addEventListener('pointercancel', endDrag);
+    el.addEventListener('click', function (e) { if (moved > 6) { e.preventDefault(); e.stopPropagation(); } }, true);
+
+    (function tick() {
+      if (!interacting && !reduce) el.scrollLeft += SPEED;
+      wrap();
+      requestAnimationFrame(tick);
+    })();
+  })();
 
   /* Idea modal — opens the pitch, sends it as a prefilled email (works on
      static hosting with no backend). Swap to a form endpoint later if wanted. */
