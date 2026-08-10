@@ -124,6 +124,17 @@ h1 .grad{
 .grid{display:grid; grid-template-columns:1fr; gap:.9rem;}
 @media(min-width:560px){ .grid{grid-template-columns:1fr 1fr;} }
 
+/* Phone: condense the tiles so they read tight, not massive */
+@media(max-width:559px){
+  .grid{gap:.6rem;}
+  .card{padding:.95rem 1.05rem 1rem; border-radius:15px;}
+  .card-top{margin-bottom:.55rem;}
+  .name{font-size:var(--text-lg);}
+  .desc{margin-top:.3rem; line-height:1.4;}
+  .open{margin-top:.7rem;}
+  .rule{margin:1.75rem 0 .9rem;}
+}
+
 .card{
   position:relative; display:block; text-decoration:none; color:inherit;
   padding:1.35rem 1.4rem 1.5rem; border-radius:18px;
