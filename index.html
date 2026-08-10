@@ -300,8 +300,8 @@ footer{
     /* Organized "AI brain": clustered lobes, each with a bright hub, wired into
        a connectome around a central core. Pulses = thoughts/messages firing
        across regions — still shooting and blasting, just organised. */
-    var LOBES = reduce ? 6 : (mobile ? 8 : 11);
-    var PER   = reduce ? 3 : (mobile ? 4 : 6);     // members per lobe
+    var LOBES = reduce ? 6 : 11;                   // same density on phone as desktop
+    var PER   = reduce ? 3 : 6;                    // members per lobe
     var cx = 0.5, cy = 0.43, rx = 0.35, ry = 0.275;
 
     var nodes = [], hubIdx = [], coreIndex = 0;
@@ -342,15 +342,15 @@ footer{
       edges.push([hubIdx[g], coreIndex]);                              // hub → core
       edges.push([hubIdx[g], hubIdx[(g + 1) % hubIdx.length]]);        // hub ring
     }
-    var cross = reduce ? 0 : (mobile ? 4 : 8);                         // long-range blasts
+    var cross = reduce ? 0 : 8;                                        // long-range blasts
     for (var xk = 0; xk < cross; xk++) {
       var h1 = hubIdx[(Math.random()*hubIdx.length)|0], h2 = hubIdx[(Math.random()*hubIdx.length)|0];
       if (h1 !== h2) edges.push([h1, h2]);
     }
 
     var pulses = [], lastPulse = 0;
-    var PULSE_GAP = reduce ? 1e9 : (mobile ? 420 : 190);   // heaps more firing
-    var PULSE_CAP = mobile ? 40 : 90;
+    var PULSE_GAP = reduce ? 1e9 : 190;                    // heaps more firing (phone = desktop)
+    var PULSE_CAP = 90;
 
     var w = 0, h = 0, dpr = 1;
     function resize() {
@@ -416,7 +416,7 @@ footer{
       // spawn work-pulses
       if (!reduce && now - lastPulse > PULSE_GAP && edges.length) {
         lastPulse = now;
-        var burst = mobile ? 1 : 2;                 // fire a couple at a time
+        var burst = 2;                              // fire a couple at a time
         for (var s = 0; s < burst; s++) {
           var ed = edges[(Math.random() * edges.length) | 0];
           pulses.push({ edge: ed, t: 0, speed: 0.006 + Math.random() * 0.010, hot: Math.random() > 0.6 });
@@ -486,7 +486,7 @@ footer{
     var mobile = matchMedia('(max-width: 640px)').matches;
 
     var EMOJIS = ['😎','😘','😩','😑','🙏','🫡','🤓','🫥','♾️','♤','🍄','🫦'];
-    var N = reduce ? 6 : (mobile ? 11 : 18);
+    var N = reduce ? 6 : 18;                        // same emoji swarm size on phone
 
     var W = 0, H = 0, DPR = 1;
     function size() {
@@ -507,7 +507,7 @@ footer{
         x: rnd(0, W), y: rnd(0, H),
         vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
         rot: rnd(0, Math.PI * 2), vr: rnd(-0.05, 0.05),
-        size: rnd(mobile ? 20 : 26, mobile ? 38 : 56),
+        size: rnd(mobile ? 22 : 26, mobile ? 46 : 56),
         wob: rnd(0, Math.PI * 2), wobSp: rnd(0.02, 0.09),
         next: rnd(30, 150), pop: 0
       });
