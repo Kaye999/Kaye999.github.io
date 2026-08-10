@@ -273,6 +273,38 @@ footer{
 .shake{animation:shake .4s;}
 @keyframes shake{0%,100%{transform:translateX(0);} 20%,60%{transform:translateX(-7px);} 40%,80%{transform:translateX(7px);}}
 
+/* ---- Selected-work marquee (the "train") -------------------------------- */
+.marquee{
+  position:relative; width:100vw; margin-left:calc(50% - 50vw); overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+          mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee-track{ display:flex; gap:1rem; width:max-content; padding:.5rem .25rem; animation:marq 46s linear infinite; }
+.marquee:hover .marquee-track, .marquee:active .marquee-track{ animation-play-state:paused; }
+@keyframes marq{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+.work-card{
+  flex:0 0 auto; width:clamp(258px, 74vw, 336px); border-radius:16px; overflow:hidden; position:relative;
+  text-decoration:none; color:inherit; border:1px solid var(--line); background:var(--ink-2);
+  transition:transform .4s var(--ease-out-expo), border-color .4s, box-shadow .4s;
+}
+.work-card:hover{ transform:translateY(-4px); border-color:var(--line-2); box-shadow:0 24px 54px -32px rgba(47,243,234,.65); }
+.work-card img{ display:block; width:100%; aspect-ratio:16/10; object-fit:cover; object-position:top center; background:var(--ink-3); }
+.work-cap{ display:flex; align-items:center; justify-content:space-between; gap:.6rem; padding:.75rem .9rem; }
+.work-name{ font-family:var(--font-display); font-weight:700; font-size:var(--text-base); color:var(--bone); }
+.work-tag{ font-family:var(--font-mono); font-size:var(--text-tiny); letter-spacing:.06em; text-transform:uppercase; color:var(--ash-dim); white-space:nowrap; }
+
+/* ---- FX toggle (kill / restore the emoji chaos) ------------------------- */
+.fx-toggle{
+  position:fixed; right:14px; bottom:14px; z-index:40; display:inline-flex; align-items:center; gap:.55em;
+  font-family:var(--font-mono); font-size:var(--text-tiny); letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ash); background:rgba(11,15,28,.82); backdrop-filter:blur(8px);
+  border:1px solid var(--line); border-radius:999px; padding:.55em .9em; cursor:pointer;
+  transition:border-color .3s, color .3s;
+}
+.fx-toggle:hover, .fx-toggle:focus-visible{ border-color:var(--line-2); color:var(--cyan); outline:none; }
+.fx-dot{ width:7px; height:7px; border-radius:999px; background:var(--cyan); box-shadow:0 0 8px 1px var(--cyan); transition:background .3s, box-shadow .3s; }
+.fx-toggle.off .fx-dot{ background:var(--ash-dim); box-shadow:none; }
+
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important; animation-iteration-count:1!important; transition-duration:.001ms!important; scroll-behavior:auto!important;}
 }
@@ -329,6 +361,32 @@ footer{
       </a>
     </section>
 
+    <div class="rule">Selected work</div>
+    <div class="marquee" aria-label="Example builds">
+      <div class="marquee-track">
+        <a class="work-card" href="https://tallow-ridge.vercel.app" target="_blank" rel="noopener">
+          <img src="assets/tallow-ridge.jpeg" alt="Tallow Ridge — immersive 3D skincare store" loading="lazy" />
+          <div class="work-cap"><span class="work-name">Tallow Ridge</span><span class="work-tag">Immersive 3D</span></div>
+        </a>
+        <a class="work-card" href="https://property-microsite.vercel.app" target="_blank" rel="noopener">
+          <img src="assets/microsite.jpeg" alt="Property listing microsite" loading="lazy" />
+          <div class="work-cap"><span class="work-name">Property Microsite</span><span class="work-tag">Real-estate</span></div>
+        </a>
+        <a class="work-card" href="https://growm8.co/s/sushi-honba-premium" target="_blank" rel="noopener">
+          <img src="assets/sushi-honba.jpeg" alt="Sushi Honba — premium motion restaurant site" loading="lazy" />
+          <div class="work-cap"><span class="work-name">Sushi Honba</span><span class="work-tag">Premium motion</span></div>
+        </a>
+        <a class="work-card" href="https://tooeasymate.com.au" target="_blank" rel="noopener">
+          <img src="assets/tooeasymate.jpeg" alt="Too Easy Mate — property maintenance site" loading="lazy" />
+          <div class="work-cap"><span class="work-name">Too Easy Mate</span><span class="work-tag">Live site</span></div>
+        </a>
+        <a class="work-card" href="https://property-concierge.vercel.app" target="_blank" rel="noopener">
+          <img src="assets/portal.jpeg" alt="Property Concierge — client portal SaaS" loading="lazy" />
+          <div class="work-cap"><span class="work-name">Property Concierge</span><span class="work-tag">Client portal</span></div>
+        </a>
+      </div>
+    </div>
+
     <div class="rule">Connect</div>
 
     <div class="connect">
@@ -349,6 +407,12 @@ footer{
       <span>Built by Kaye</span>
     </footer>
   </main>
+
+  <!-- Toggle the emoji chaos on/off -->
+  <button class="fx-toggle" id="emojiToggle" type="button" aria-pressed="true" title="Toggle the flying emojis">
+    <span class="fx-dot" aria-hidden="true"></span>
+    <span>Emojis <span id="fxState">on</span></span>
+  </button>
 
   <!-- Idea modal -->
   <div class="modal" id="ideaModal" role="dialog" aria-modal="true" aria-labelledby="ideaTitle" hidden>
@@ -591,6 +655,22 @@ footer{
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     var mobile = matchMedia('(max-width: 640px)').matches;
 
+    // On/off toggle (remembers the visitor's choice)
+    var paused = false;
+    try { paused = localStorage.getItem('kaye_emojis') === 'off'; } catch (e) {}
+    var tgl = document.getElementById('emojiToggle');
+    var stt = document.getElementById('fxState');
+    function syncToggle() {
+      if (tgl) { tgl.classList.toggle('off', paused); tgl.setAttribute('aria-pressed', String(!paused)); }
+      if (stt) { stt.textContent = paused ? 'off' : 'on'; }
+    }
+    syncToggle();
+    if (tgl) tgl.addEventListener('click', function () {
+      paused = !paused;
+      try { localStorage.setItem('kaye_emojis', paused ? 'off' : 'on'); } catch (e) {}
+      syncToggle();
+    });
+
     var EMOJIS = ['😎','😘','😩','😑','🙏','🫡','🤓','🫥','♾️','♤','🍄','🫦'];
     var N = reduce ? 6 : 18;                        // same emoji swarm size on phone
 
@@ -621,6 +701,7 @@ footer{
 
     function loop() {
       x.clearRect(0, 0, W, H);
+      if (paused) { requestAnimationFrame(loop); return; }   // chaos switched off
       for (var i = 0; i < P.length; i++) {
         var p = P[i];
         if (!reduce) {
@@ -662,6 +743,9 @@ footer{
     }
     requestAnimationFrame(loop);
   })();
+
+  /* Duplicate the work-marquee track so the scroll loops seamlessly */
+  (function () { var tr = document.querySelector('.marquee-track'); if (tr) tr.innerHTML += tr.innerHTML; })();
 
   /* Idea modal — opens the pitch, sends it as a prefilled email (works on
      static hosting with no backend). Swap to a form endpoint later if wanted. */
