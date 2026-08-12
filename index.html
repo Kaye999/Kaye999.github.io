@@ -881,6 +881,56 @@ footer{
         : "I opened Instagram — drop me a DM with your idea.");
     });
   })();
+
+  /* Landing analytics — privacy-light beacon to Supabase. Records each page view
+     and which link gets clicked; aggregates surface in the NGH dashboard.
+     No cookies, no PII — a random id in localStorage powers unique counts only.
+     Anon key is insert-only (RLS); raw rows are never readable client-side. */
+  (function () {
+    var SB   = 'https://ijdzpvlrebwjaaxphfpq.supabase.co';
+    var KEY  = 'sb_publishable_7JlrWWl02zKgXKkIp0ZFmg_GqDRvda0';
+    var SITE = 'kaye999.github.io';
+
+    var visitor;
+    try {
+      visitor = localStorage.getItem('kaye_vid');
+      if (!visitor) { visitor = Date.now().toString(36) + Math.random().toString(36).slice(2, 10); localStorage.setItem('kaye_vid', visitor); }
+    } catch (e) { visitor = null; }
+
+    var ua = navigator.userAgent || '';
+    var device = /iPad|Tablet|PlayBook|Silk|Android(?!.*Mobile)/i.test(ua) ? 'tablet'
+               : /Mobi|Android|iPhone|iPod|IEMobile|BlackBerry/i.test(ua) ? 'mobile'
+               : 'desktop';
+
+    function send(event, target) {
+      try {
+        fetch(SB + '/rest/v1/page_views', {
+          method: 'POST', keepalive: true,
+          headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          body: JSON.stringify({
+            site: SITE, event: event, path: location.pathname || '/',
+            target: target || null, referrer: (document.referrer || '').slice(0, 400),
+            device: device, visitor: visitor
+          })
+        }).catch(function () {});
+      } catch (e) {}
+    }
+
+    send('view', null);   // page view on load
+
+    // Which links get tapped — derive a readable label, no HTML changes needed.
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+      if (!a) return;
+      var nm = a.querySelector('.name'), wn = a.querySelector('.work-name');
+      var label = a.getAttribute('data-track')
+        || (nm && nm.textContent.trim())
+        || (wn && wn.textContent.trim())
+        || a.getAttribute('aria-label')
+        || (function () { try { return new URL(a.href, location.href).hostname.replace(/^www\./, ''); } catch (x) { return 'link'; } })();
+      send('click', String(label).slice(0, 80));
+    }, true);
+  })();
   </script>
 </body>
 </html>
