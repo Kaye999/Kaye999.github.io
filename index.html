@@ -82,9 +82,6 @@ body::after{
           mask-image:radial-gradient(145% 125% at 50% 38%, #000 58%, transparent 100%);
 }
 
-/* Flying-emoji swarm — chaotic layer that floats ABOVE everything (clicks pass through) */
-#flyers{position:fixed; inset:0; z-index:5; width:100%; height:100%; pointer-events:none;}
-
 .wrap{position:relative; z-index:1; width:100%; max-width:44rem; margin-inline:auto; padding:clamp(2.5rem,2rem + 5vw,5rem) var(--gutter) 3rem;}
 
 /* ---- Header ------------------------------------------------------------- */
@@ -269,7 +266,6 @@ footer{
 }
 .btn-send:hover, .btn-send:focus-visible{transform:translateY(-2px); background:linear-gradient(120deg, var(--cyan-hot), var(--cyan));}
 .modal-done{text-align:center;}
-.done-emoji{font-size:2.6rem; margin-bottom:.4rem;}
 .shake{animation:shake .4s;}
 @keyframes shake{0%,100%{transform:translateX(0);} 20%,60%{transform:translateX(-7px);} 40%,80%{transform:translateX(7px);}}
 
@@ -295,18 +291,6 @@ footer{
 .work-name{ font-family:var(--font-display); font-weight:700; font-size:var(--text-base); color:var(--bone); }
 .work-tag{ font-family:var(--font-mono); font-size:var(--text-tiny); letter-spacing:.06em; text-transform:uppercase; color:var(--ash-dim); white-space:nowrap; }
 
-/* ---- FX toggle (kill / restore the emoji chaos) ------------------------- */
-.fx-toggle{
-  position:fixed; right:14px; bottom:14px; z-index:40; display:inline-flex; align-items:center; gap:.55em;
-  font-family:var(--font-mono); font-size:var(--text-tiny); letter-spacing:.1em; text-transform:uppercase;
-  color:var(--ash); background:rgba(11,15,28,.82); backdrop-filter:blur(8px);
-  border:1px solid var(--line); border-radius:999px; padding:.55em .9em; cursor:pointer;
-  transition:border-color .3s, color .3s;
-}
-.fx-toggle:hover, .fx-toggle:focus-visible{ border-color:var(--line-2); color:var(--cyan); outline:none; }
-.fx-dot{ width:7px; height:7px; border-radius:999px; background:var(--cyan); box-shadow:0 0 8px 1px var(--cyan); transition:background .3s, box-shadow .3s; }
-.fx-toggle.off .fx-dot{ background:var(--ash-dim); box-shadow:none; }
-
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important; animation-iteration-count:1!important; transition-duration:.001ms!important; scroll-behavior:auto!important;}
 }
@@ -314,7 +298,6 @@ footer{
 </head>
 <body>
   <canvas id="net" aria-hidden="true"></canvas>
-  <canvas id="flyers" aria-hidden="true"></canvas>
   <main class="wrap">
     <header>
       <div class="eyebrow">Ninth Gate // Founder</div>
@@ -417,12 +400,6 @@ footer{
     </footer>
   </main>
 
-  <!-- Toggle the emoji chaos on/off -->
-  <button class="fx-toggle" id="emojiToggle" type="button" aria-pressed="true" title="Toggle the flying emojis">
-    <span class="fx-dot" aria-hidden="true"></span>
-    <span>Emojis <span id="fxState">on</span></span>
-  </button>
-
   <!-- Idea modal -->
   <div class="modal" id="ideaModal" role="dialog" aria-modal="true" aria-labelledby="ideaTitle" hidden>
     <div class="modal-backdrop" data-close></div>
@@ -451,7 +428,6 @@ footer{
       </div>
 
       <div id="ideaDone" class="modal-done" hidden>
-        <div class="done-emoji" id="ideaDoneEmoji">🫡</div>
         <h2 class="modal-title" id="ideaDoneTitle">Sent.</h2>
         <p class="modal-sub" id="ideaDoneMsg"></p>
         <button class="btn" id="ideaAgain" type="button" style="width:100%; justify-content:center;">Close</button>
@@ -654,105 +630,6 @@ footer{
     requestAnimationFrame(draw);
   })();
 
-  /* Flying-emoji swarm — funny, weird, unpredictable. Each emoji drifts, then
-     randomly darts, spin-bursts, size-pops, wobbles or briefly freezes. Wraps
-     around the screen edges so the chaos never stops. */
-  (function () {
-    var cv = document.getElementById('flyers');
-    if (!cv || !cv.getContext) return;
-    var x = cv.getContext('2d');
-    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var mobile = matchMedia('(max-width: 640px)').matches;
-
-    // On/off toggle (remembers the visitor's choice)
-    var paused = false;
-    try { paused = localStorage.getItem('kaye_emojis') === 'off'; } catch (e) {}
-    var tgl = document.getElementById('emojiToggle');
-    var stt = document.getElementById('fxState');
-    function syncToggle() {
-      if (tgl) { tgl.classList.toggle('off', paused); tgl.setAttribute('aria-pressed', String(!paused)); }
-      if (stt) { stt.textContent = paused ? 'off' : 'on'; }
-    }
-    syncToggle();
-    if (tgl) tgl.addEventListener('click', function () {
-      paused = !paused;
-      try { localStorage.setItem('kaye_emojis', paused ? 'off' : 'on'); } catch (e) {}
-      syncToggle();
-    });
-
-    var EMOJIS = ['😎','😘','😩','😑','🙏','🫡','🤓','🫥','♾️','♤','🍄','🫦'];
-    var N = reduce ? 6 : 18;                        // same emoji swarm size on phone
-
-    var W = 0, H = 0, DPR = 1;
-    function size() {
-      DPR = Math.min(window.devicePixelRatio || 1, 2);
-      W = window.innerWidth; H = window.innerHeight;
-      cv.width = W * DPR; cv.height = H * DPR;
-      x.setTransform(DPR, 0, 0, DPR, 0, 0);
-    }
-    size();
-    window.addEventListener('resize', size);
-    function rnd(a, b) { return a + Math.random() * (b - a); }
-
-    var P = [];
-    for (var i = 0; i < N; i++) {
-      var ang = rnd(0, Math.PI * 2), sp = rnd(0.4, 1.5);
-      P.push({
-        e: EMOJIS[i % EMOJIS.length],
-        x: rnd(0, W), y: rnd(0, H),
-        vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
-        rot: rnd(0, Math.PI * 2), vr: rnd(-0.05, 0.05),
-        size: rnd(mobile ? 22 : 26, mobile ? 46 : 56),
-        wob: rnd(0, Math.PI * 2), wobSp: rnd(0.02, 0.09),
-        next: rnd(30, 150), pop: 0
-      });
-    }
-
-    function loop() {
-      x.clearRect(0, 0, W, H);
-      if (paused) { requestAnimationFrame(loop); return; }   // chaos switched off
-      for (var i = 0; i < P.length; i++) {
-        var p = P[i];
-        if (!reduce) {
-          if (--p.next <= 0) {                       // fire a random behaviour
-            var r = Math.random();
-            if (r < 0.42) { var a = rnd(0, Math.PI*2), s = rnd(1.6, 4.8); p.vx = Math.cos(a)*s; p.vy = Math.sin(a)*s; } // dart
-            else if (r < 0.70) { p.vr = rnd(-0.32, 0.32); }        // spin burst
-            else if (r < 0.90) { p.pop = 12; }                     // size pop
-            else { p.vx *= 0.08; p.vy *= 0.08; }                   // near-freeze
-            p.next = rnd(28, 150);
-          }
-          p.vx *= 0.994; p.vy *= 0.994;                            // settle darts
-          var spd = Math.hypot(p.vx, p.vy);
-          if (spd < 0.28) { var a2 = rnd(0, Math.PI*2); p.vx += Math.cos(a2)*0.32; p.vy += Math.sin(a2)*0.32; }
-          p.x += p.vx; p.y += p.vy;
-          p.rot += p.vr; p.vr *= 0.975;
-          p.wob += p.wobSp;
-        } else {
-          p.x += p.vx * 0.3; p.y += p.vy * 0.3; p.rot += 0.003;
-        }
-        var m = 70;                                                // wrap edges
-        if (p.x < -m) p.x = W + m; if (p.x > W + m) p.x = -m;
-        if (p.y < -m) p.y = H + m; if (p.y > H + m) p.y = -m;
-
-        var pop = p.pop > 0 ? (p.pop--, 1 + Math.sin((12 - p.pop) / 12 * Math.PI) * 0.55) : 1;
-        var wobOff = Math.sin(p.wob) * 4;
-
-        x.save();
-        x.translate(p.x, p.y + wobOff);
-        x.rotate(p.rot);
-        x.scale(pop, pop);
-        x.globalAlpha = 0.92;
-        x.font = p.size + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
-        x.textAlign = 'center'; x.textBaseline = 'middle';
-        x.fillText(p.e, 0, 0);
-        x.restore();
-      }
-      requestAnimationFrame(loop);
-    }
-    requestAnimationFrame(loop);
-  })();
-
   /* Work marquee — auto-scroll + drag / swipe (manual). Triplicated track loops
      seamlessly; auto pauses while the visitor hovers, drags, swipes or wheels. */
   (function () {
@@ -838,8 +715,7 @@ footer{
       if (!v) { txt.classList.remove('shake'); void txt.offsetWidth; txt.classList.add('shake'); txt.focus(); }
       return v;
     }
-    function showDone(emoji, title, msg) {
-      document.getElementById('ideaDoneEmoji').textContent = emoji;
+    function showDone(title, msg) {
       document.getElementById('ideaDoneTitle').textContent = title;
       document.getElementById('ideaDoneMsg').innerHTML = msg;
       form.hidden = true; done.hidden = false;
@@ -865,7 +741,7 @@ footer{
       window.location.href = 'mailto:ethankay2307@gmail.com'
         + '?subject=' + encodeURIComponent('New idea via kaye999.github.io')
         + '&body=' + encodeURIComponent(body);
-      showDone('🫡', 'Sent.', "Your mail app should've opened with it ready to fire off. If it didn't, reach me at <a href=\"mailto:ethankay2307@gmail.com\">ethankay2307@gmail.com</a>.");
+      showDone('Sent.', "Your mail app should've opened with it ready to fire off. If it didn't, reach me at <a href=\"mailto:ethankay2307@gmail.com\">ethankay2307@gmail.com</a>.");
     });
 
     // Path 2 — DM it (copy idea to clipboard, open Instagram DM)
@@ -876,7 +752,7 @@ footer{
         if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(idea); copied = true; }
       } catch (e) { copied = false; }
       window.open(IG_DM, '_blank', 'noopener');
-      showDone('📋', 'Copied!', copied
+      showDone('Copied!', copied
         ? "Your idea's copied to your clipboard — just paste it into the Instagram DM I opened for you."
         : "I opened Instagram — drop me a DM with your idea.");
     });
