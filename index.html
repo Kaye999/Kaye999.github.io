@@ -177,8 +177,7 @@ h1 .grad{
 .open .arw{transition:transform .35s var(--ease-out-expo);}
 .card:hover .open .arw, .card:focus-visible .open .arw{transform:translate(3px,-3px);}
 
-/* ---- Connect row -------------------------------------------------------- */
-.connect{display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1.25rem;}
+/* ---- Buttons (pitch modal) ---------------------------------------------- */
 .btn{
   flex:1 1 auto; display:inline-flex; align-items:center; justify-content:center; gap:.55em;
   min-width:9rem; padding:.95em 1.3em; border-radius:12px; text-decoration:none;
@@ -189,16 +188,26 @@ h1 .grad{
 .btn:hover, .btn:focus-visible{transform:translateY(-2px); border-color:var(--line-2); background:rgba(47,243,234,.06); outline:none;}
 .btn svg{width:1.05em; height:1.05em;}
 
-/* Instagram — brand gradient, faded to sit on the dark theme */
-.btn-ig{
-  background:linear-gradient(120deg, rgba(254,218,117,.16), rgba(250,126,30,.16) 30%, rgba(214,41,118,.20) 62%, rgba(150,47,191,.18) 82%, rgba(79,91,213,.16));
-  border-color:rgba(214,41,118,.42);
+/* Social icon row (top of page) — clickable brand logos */
+.socials{display:flex; gap:.6rem; margin-top:1.25rem;}
+.social{
+  width:2.7rem; height:2.7rem; display:inline-flex; align-items:center; justify-content:center;
+  border-radius:12px; text-decoration:none; color:var(--bone);
+  border:1px solid var(--line); background:rgba(158,190,255,.04);
+  transition:transform .35s var(--ease-out-expo), border-color .35s, background .35s, box-shadow .35s;
 }
-.btn-ig svg{color:#ff7eb3;}
-.btn-ig:hover, .btn-ig:focus-visible{
-  border-color:rgba(214,41,118,.85);
-  background:linear-gradient(120deg, rgba(254,218,117,.26), rgba(250,126,30,.26) 30%, rgba(214,41,118,.34) 62%, rgba(150,47,191,.30) 82%, rgba(79,91,213,.26));
-  box-shadow:0 14px 40px -20px rgba(214,41,118,.9);
+.social svg{width:1.3rem; height:1.3rem;}
+.social:hover, .social:focus-visible{transform:translateY(-2px); outline:none;}
+.social-snap svg{color:#fffc00;}
+.social-snap:hover, .social-snap:focus-visible{
+  border-color:rgba(255,252,0,.7); background:rgba(255,252,0,.14); box-shadow:0 12px 34px -20px rgba(255,252,0,.7);
+}
+.social-ig svg{color:#ff7eb3;}
+.social-ig:hover, .social-ig:focus-visible{
+  border-color:rgba(214,41,118,.85); background:rgba(214,41,118,.12); box-shadow:0 12px 34px -20px rgba(214,41,118,.85);
+}
+.social-mail:hover, .social-mail:focus-visible{
+  border-color:var(--line-2); background:rgba(47,243,234,.06); box-shadow:0 12px 34px -20px rgba(47,243,234,.6);
 }
 
 /* ---- Footer ------------------------------------------------------------- */
@@ -304,6 +313,19 @@ footer{
       <h1>Kaye<span class="grad">.</span></h1>
       <p class="tagline">I build AI-native software businesses.</p>
       <div class="status"><span class="dot" aria-hidden="true"></span> Building · Live</div>
+
+      <div class="socials">
+        <a class="social social-snap" href="https://www.snapchat.com/add/ethankay9" target="_blank" rel="noopener" aria-label="Snapchat" title="Snapchat">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2.2c2.6 0 4.4 2 4.5 4.6.02.6-.02 1.3-.05 1.9.28.16.66.2.98.05.2-.1.43-.1.6.02.2.13.28.4.18.63-.2.5-.9.72-1.4.9-.15.05-.34.1-.4.28-.06.2.1.44.24.62.6.8 1.5 1.44 2.5 1.68.24.06.4.28.34.52-.14.56-1.1.78-1.6.9-.14.03-.2.08-.24.28-.03.16-.06.4-.28.48-.3.1-.86-.06-1.5-.02-.5.03-.9.2-1.36.5-.6.4-1.24.8-2.28.8s-1.68-.4-2.28-.8c-.46-.3-.86-.47-1.36-.5-.64-.04-1.2.12-1.5.02-.22-.08-.25-.32-.28-.48-.04-.2-.1-.25-.24-.28-.5-.12-1.46-.34-1.6-.9-.06-.24.1-.46.34-.52 1-.24 1.9-.88 2.5-1.68.14-.18.3-.42.24-.62-.06-.18-.25-.23-.4-.28-.5-.18-1.2-.4-1.4-.9-.1-.23-.02-.5.18-.63.17-.12.4-.12.6-.02.32.15.7.11.98-.05-.03-.6-.07-1.3-.05-1.9C7.6 4.2 9.4 2.2 12 2.2z"/></svg>
+        </a>
+        <!-- TODO: swap to Ethan's real Instagram profile URL, e.g. https://www.instagram.com/your.handle -->
+        <a class="social social-ig" href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a class="social social-mail" href="mailto:ethankay2307@gmail.com" aria-label="Email" title="Email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M3 6l9 6 9-6"/></svg>
+        </a>
+      </div>
     </header>
 
     <button class="idea-cta" id="ideaOpen" type="button">
@@ -377,21 +399,6 @@ footer{
           <div class="work-cap"><span class="work-name">Property Concierge</span><span class="work-tag">Client portal</span></div>
         </a>
       </div>
-    </div>
-
-    <div class="rule">Connect</div>
-
-    <div class="connect">
-      <!-- TODO: replace YOUR_HANDLE with your real Instagram handle -->
-      <!-- TODO: swap to your profile URL, e.g. https://instagram.com/your.handle -->
-      <a class="btn btn-ig" href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-        Instagram
-      </a>
-      <a class="btn" href="mailto:ethankay2307@gmail.com" aria-label="Email">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M3 6l9 6 9-6"/></svg>
-        Email
-      </a>
     </div>
 
     <footer>
