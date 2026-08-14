@@ -131,7 +131,7 @@ h1 .grad{
   .card-top{margin-bottom:.55rem;}
   .name{font-size:var(--text-lg);}
   .desc{margin-top:.3rem; line-height:1.4;}
-  .open{margin-top:.7rem;}
+  .open, .soon-badge{margin-top:.7rem;}
   .rule{margin:1.75rem 0 .9rem;}
 }
 
@@ -176,6 +176,28 @@ h1 .grad{
 }
 .open .arw{transition:transform .35s var(--ease-out-expo);}
 .card:hover .open .arw, .card:focus-visible .open .arw{transform:translate(3px,-3px);}
+
+/* Coming-soon tile — same shell, no link affordance */
+.card-soon{cursor:default;}
+.card-soon:hover{
+  transform:none; box-shadow:none;
+  border-color:color-mix(in srgb, var(--accent) 20%, var(--line));
+}
+.card-soon:hover::before{opacity:.6;}
+.soon-badge{
+  display:inline-flex; align-items:center; gap:.55em; margin-top:1.1rem;
+  font-family:var(--font-mono); font-size:var(--text-tiny); letter-spacing:.12em;
+  text-transform:uppercase; color:var(--accent);
+}
+.soon-badge .pulse{
+  width:6px; height:6px; border-radius:999px; background:var(--accent);
+  box-shadow:0 0 8px 1px color-mix(in srgb,var(--accent) 70%, transparent);
+  animation:soonPulse 2.4s ease-in-out infinite;
+}
+@keyframes soonPulse{
+  0%,100%{opacity:.35; transform:scale(1);}
+  50%{opacity:1; transform:scale(1.35);}
+}
 
 /* ---- Buttons (pitch modal) ---------------------------------------------- */
 .btn{
@@ -373,6 +395,13 @@ footer{
         <p class="desc">Nootropic Enhancements AU — lab-verified peptide catalogue, AUD pricing &amp; COAs.</p>
         <span class="open">Open <span class="arw">↗</span></span>
       </a>
+
+      <div class="card card-soon" style="--accent:#cba6ff">
+        <div class="card-top"><span class="idx">06</span><span class="acc" aria-hidden="true"></span></div>
+        <div class="name">Foundations</div>
+        <p class="desc">12-week calisthenics program — pull-ups, dips, L-sit, core &amp; back strength. Train the way I train.</p>
+        <span class="soon-badge"><span class="pulse" aria-hidden="true"></span> Coming soon</span>
+      </div>
     </section>
 
     <div class="rule">Selected work</div>
