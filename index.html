@@ -4,12 +4,12 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Kaye — Ninth Gate</title>
-<meta name="description" content="Kaye — founder. I build AI-native software businesses. SalesM8, NEXES, GrowM8, TEM." />
+<meta name="description" content="Kaye — founder. Everything I do: crypto, calisthenics, and businesses built on AI-native software. NEXES, GrowM8, TEM, Peptides." />
 <meta name="theme-color" content="#04060c" />
 
 <!-- Open Graph / social preview -->
 <meta property="og:title" content="Kaye — Ninth Gate" />
-<meta property="og:description" content="I build AI-native software businesses. SalesM8 · NEXES · GrowM8 · TEM." />
+<meta property="og:description" content="Everything I do: crypto, calisthenics, and businesses built on AI-native software. NEXES · GrowM8 · TEM · Peptides." />
 <meta property="og:type" content="website" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -139,8 +139,8 @@ h1 .grad{
   position:relative; display:block; text-decoration:none; color:inherit;
   padding:1.35rem 1.4rem 1.5rem; border-radius:18px;
   background:linear-gradient(180deg,
-    color-mix(in srgb, var(--accent) 9%, rgba(17,23,40,.66)),
-    color-mix(in srgb, var(--accent) 3%, rgba(7,10,18,.66)));
+    color-mix(in srgb, var(--accent) 9%, rgba(17,23,40,.93)),
+    color-mix(in srgb, var(--accent) 3%, rgba(7,10,18,.93)));
   border:1px solid color-mix(in srgb, var(--accent) 20%, var(--line));
   transition:transform .4s var(--ease-out-expo), border-color .4s, box-shadow .4s, background .4s;
   overflow:hidden; isolation:isolate;
@@ -178,6 +178,27 @@ h1 .grad{
 .card:hover .open .arw, .card:focus-visible .open .arw{transform:translate(3px,-3px);}
 
 /* Coming-soon tile — same shell, no link affordance */
+/* A card with more than one destination. It is a <div>, so it gets no anchor
+   hover lift — each link inside is individually tappable instead. */
+.card-multi{cursor:default;}
+.card-multi:hover{
+  transform:none; box-shadow:none;
+  border-color:color-mix(in srgb, var(--accent) 20%, var(--line));
+}
+.card-links{display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.1rem;}
+.card-links .open{
+  margin-top:0; min-height:44px; padding:.5em .9em; border-radius:10px;
+  border:1px solid color-mix(in srgb, var(--accent) 28%, var(--line));
+  background:color-mix(in srgb, var(--accent) 8%, transparent);
+  text-decoration:none; transition:background .3s, border-color .3s, transform .3s var(--ease-out-expo);
+}
+.card-links .open:hover, .card-links .open:focus-visible{
+  transform:translateY(-2px); outline:none;
+  border-color:color-mix(in srgb, var(--accent) 65%, var(--line));
+  background:color-mix(in srgb, var(--accent) 16%, transparent);
+}
+@media(max-width:559px){ .card-links{margin-top:.7rem;} }
+
 .card-soon{cursor:default;}
 .card-soon:hover{
   transform:none; box-shadow:none;
@@ -223,10 +244,6 @@ h1 .grad{
 .social-snap svg{color:#fffc00;}
 .social-snap:hover, .social-snap:focus-visible{
   border-color:rgba(255,252,0,.7); background:rgba(255,252,0,.14); box-shadow:0 12px 34px -20px rgba(255,252,0,.7);
-}
-.social-ig svg{color:#ff7eb3;}
-.social-ig:hover, .social-ig:focus-visible{
-  border-color:rgba(214,41,118,.85); background:rgba(214,41,118,.12); box-shadow:0 12px 34px -20px rgba(214,41,118,.85);
 }
 .social-x svg{color:var(--bone);}
 .social-x:hover, .social-x:focus-visible{
@@ -316,16 +333,12 @@ footer{
     <header>
       <div class="eyebrow">Ninth Gate // Founder</div>
       <h1>Kaye<span class="grad">.</span></h1>
-      <p class="tagline">I build AI-native software businesses.</p>
+      <p class="tagline">Everything I do &mdash; crypto, calisthenics, and businesses built on AI-native software.</p>
       <div class="status"><span class="dot" aria-hidden="true"></span> Building · Live</div>
 
       <div class="socials">
         <a class="social social-snap" href="https://www.snapchat.com/add/ethankay9" target="_blank" rel="noopener" aria-label="Snapchat" title="Snapchat">
           <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2.2c2.6 0 4.4 2 4.5 4.6.02.6-.02 1.3-.05 1.9.28.16.66.2.98.05.2-.1.43-.1.6.02.2.13.28.4.18.63-.2.5-.9.72-1.4.9-.15.05-.34.1-.4.28-.06.2.1.44.24.62.6.8 1.5 1.44 2.5 1.68.24.06.4.28.34.52-.14.56-1.1.78-1.6.9-.14.03-.2.08-.24.28-.03.16-.06.4-.28.48-.3.1-.86-.06-1.5-.02-.5.03-.9.2-1.36.5-.6.4-1.24.8-2.28.8s-1.68-.4-2.28-.8c-.46-.3-.86-.47-1.36-.5-.64-.04-1.2.12-1.5.02-.22-.08-.25-.32-.28-.48-.04-.2-.1-.25-.24-.28-.5-.12-1.46-.34-1.6-.9-.06-.24.1-.46.34-.52 1-.24 1.9-.88 2.5-1.68.14-.18.3-.42.24-.62-.06-.18-.25-.23-.4-.28-.5-.18-1.2-.4-1.4-.9-.1-.23-.02-.5.18-.63.17-.12.4-.12.6-.02.32.15.7.11.98-.05-.03-.6-.07-1.3-.05-1.9C7.6 4.2 9.4 2.2 12 2.2z"/></svg>
-        </a>
-        <!-- TODO: swap to Ethan's real Instagram profile URL, e.g. https://www.instagram.com/your.handle -->
-        <a class="social social-ig" href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
         </a>
         <a class="social social-x" href="https://x.com/thankyoukaye" target="_blank" rel="noopener" aria-label="X — @thankyoukaye" title="@thankyoukaye" data-track="X">
           <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M17.53 3h3.02l-6.6 7.54L21.75 21h-5.96l-4.67-6.1L5.76 21H2.74l7.06-8.07L2.25 3h6.11l4.22 5.58L17.53 3Zm-1.06 16.2h1.67L7.63 4.71H5.84l10.63 14.49Z"/></svg>
@@ -347,38 +360,42 @@ footer{
     <div class="rule">Ventures</div>
 
     <section class="grid">
-      <a class="card" style="--accent:#2ff3ea" href="https://salesm8.co" target="_blank" rel="noopener">
+      <a class="card" style="--accent:#2ff3ea" href="https://nexes.com.au" target="_blank" rel="noopener">
         <div class="card-top"><span class="idx">01</span><span class="acc" aria-hidden="true"></span></div>
-        <div class="name">SalesM8</div>
-        <p class="desc">AI sales engine — scrape, enrich &amp; close leads on autopilot.</p>
-        <span class="open">Open <span class="arw">↗</span></span>
-      </a>
-
-      <a class="card" style="--accent:#4bd9f0" href="https://nexes.com.au" target="_blank" rel="noopener">
-        <div class="card-top"><span class="idx">02</span><span class="acc" aria-hidden="true"></span></div>
         <div class="name">NEXES</div>
-        <p class="desc">The economic network for autonomous AI agents.</p>
+        <p class="desc">Own a fraction of real property. Australian property and developments, split so you don&rsquo;t need the whole deposit.</p>
         <span class="open">Open <span class="arw">↗</span></span>
       </a>
 
-      <a class="card" style="--accent:#6ab6ff" href="https://growm8.co" target="_blank" rel="noopener">
-        <div class="card-top"><span class="idx">03</span><span class="acc" aria-hidden="true"></span></div>
+      <a class="card" style="--accent:#4bd9f0" href="https://growm8.co" target="_blank" rel="noopener">
+        <div class="card-top"><span class="idx">02</span><span class="acc" aria-hidden="true"></span></div>
         <div class="name">GrowM8</div>
         <p class="desc">Done-for-you websites &amp; growth systems for local business.</p>
         <span class="open">Open <span class="arw">↗</span></span>
       </a>
 
-      <a class="card" style="--accent:#8f8bff" href="https://tooeasymate.com.au" target="_blank" rel="noopener">
-        <div class="card-top"><span class="idx">04</span><span class="acc" aria-hidden="true"></span></div>
+      <a class="card" style="--accent:#6ab6ff" href="https://tooeasymate.com.au" target="_blank" rel="noopener">
+        <div class="card-top"><span class="idx">03</span><span class="acc" aria-hidden="true"></span></div>
         <div class="name">TEM</div>
         <p class="desc">Property maintenance &amp; cleaning, run like software.</p>
         <span class="open">Open <span class="arw">↗</span></span>
       </a>
 
-      <a class="card" style="--accent:#b3a5ff" href="https://peptide-pricing-master.vercel.app" target="_blank" rel="noopener">
-        <div class="card-top"><span class="idx">05</span><span class="acc" aria-hidden="true"></span></div>
+      <!-- Two destinations, so the card is a container with its own links rather
+           than an anchor (an anchor inside an anchor is invalid and unclickable). -->
+      <div class="card card-multi" style="--accent:#8f8bff">
+        <div class="card-top"><span class="idx">04</span><span class="acc" aria-hidden="true"></span></div>
         <div class="name">Peptides</div>
         <p class="desc">Nootropic Enhancements AU — lab-verified peptide catalogue, AUD pricing &amp; COAs.</p>
+        <div class="card-links">
+          <a class="open" href="https://peptide-pricing-master.vercel.app" target="_blank" rel="noopener" data-track="Peptides">Shop <span class="arw">↗</span></a>
+        </div>
+      </div>
+
+      <a class="card" style="--accent:#b3a5ff" href="https://fomo.family/r/thankyoukaye" target="_blank" rel="noopener" data-track="FOMO">
+        <div class="card-top"><span class="idx">05</span><span class="acc" aria-hidden="true"></span></div>
+        <div class="name">Trade with me</div>
+        <p class="desc">My FOMO referral — jump on and trade alongside me. Referral link; markets move both ways, so only risk what you can lose.</p>
         <span class="open">Open <span class="arw">↗</span></span>
       </a>
 
