@@ -31,6 +31,7 @@
   --violet:#8b7bff; --violet-hot:#b3a5ff;
   --glacier:#cfe0ff; --gold:#f5c877;
 
+  --text-micro:clamp(.5625rem,.55rem + .08vw,.625rem);
   --text-tiny:clamp(.625rem,.61rem + .1vw,.6875rem);
   --text-sm:clamp(.75rem,.73rem + .1vw,.8125rem);
   --text-base:clamp(.8125rem,.79rem + .12vw,.9375rem);
@@ -124,16 +125,6 @@ h1 .grad{
 .grid{display:grid; grid-template-columns:1fr; gap:.9rem;}
 @media(min-width:560px){ .grid{grid-template-columns:1fr 1fr;} }
 
-/* Phone: condense the tiles so they read tight, not massive */
-@media(max-width:559px){
-  .grid{gap:.6rem;}
-  .card{padding:.95rem 1.05rem 1rem; border-radius:15px;}
-  .card-top{margin-bottom:.55rem;}
-  .name{font-size:var(--text-lg);}
-  .desc{margin-top:.3rem; line-height:1.4;}
-  .open, .soon-badge{margin-top:.7rem;}
-  .rule{margin:1.75rem 0 .9rem;}
-}
 
 .card{
   position:relative; display:block; text-decoration:none; color:inherit;
@@ -197,7 +188,7 @@ h1 .grad{
   border-color:color-mix(in srgb, var(--accent) 65%, var(--line));
   background:color-mix(in srgb, var(--accent) 16%, transparent);
 }
-@media(max-width:559px){ .card-links{margin-top:.7rem;} }
+
 
 .card-soon{cursor:default;}
 .card-soon:hover{
@@ -218,6 +209,46 @@ h1 .grad{
 @keyframes soonPulse{
   0%,100%{opacity:.35; transform:scale(1);}
   50%{opacity:1; transform:scale(1.35);}
+}
+
+/* Placed after the base card rules on purpose: these selectors have the same
+   specificity, so the phone overrides only win by coming later in the sheet. */
+/* Phone: three across, growing downwards. A tile is ~87px wide at 320px, so the
+   descriptions cannot ride along — they stay in the DOM for screen readers and
+   search, and the whole tile becomes the tap target instead of a small link. */
+@media(max-width:559px){
+  .grid{grid-template-columns:repeat(3,1fr); gap:.45rem;}
+  .card{
+    padding:.6rem .5rem .65rem; border-radius:12px;
+    display:flex; flex-direction:column; min-height:4.4rem;
+  }
+  .card::after{top:7px; right:7px; width:9px; height:9px;}
+  .card-top{margin-bottom:.4rem;}
+  .idx{font-size:var(--text-micro);}
+  .acc{width:6px; height:6px;}
+  .name{
+    font-size:var(--text-sm); line-height:1.12; letter-spacing:-.01em;
+    overflow-wrap:break-word; hyphens:none;
+  }
+  /* Hidden, not deleted: still read by assistive tech and indexed. */
+  .desc{
+    position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+    overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+  }
+  .open{display:none;}
+  .soon-badge{
+    margin-top:auto; padding-top:.35rem; font-size:var(--text-micro);
+    letter-spacing:.06em; gap:.35em;
+  }
+  .soon-badge .pulse{width:5px; height:5px;}
+  /* Peptides has two destinations, so its links stay visible and stacked. */
+  .card-multi .card-links{display:flex; flex-direction:column; gap:.3rem; margin-top:auto; padding-top:.4rem;}
+  .card-multi .card-links .open{
+    display:inline-flex; justify-content:center; min-height:44px;
+    padding:.25em .3em; font-size:var(--text-micro); letter-spacing:.04em; gap:.25em;
+  }
+  .card-multi .card-links .open .arw{display:none;}
+  .rule{margin:1.75rem 0 .9rem;}
 }
 
 /* ---- Buttons (pitch modal) ---------------------------------------------- */
